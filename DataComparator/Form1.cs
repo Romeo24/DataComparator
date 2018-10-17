@@ -16,5 +16,10 @@ namespace DataComparator
         {
             InitializeComponent();
         }
+
+        private void btn_Select_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Hello world");
+        }
     }
 }

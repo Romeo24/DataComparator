@@ -19,8 +19,16 @@ namespace DataComparator
 
         private void btn_Select_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            MessageBox.Show("Hello world");
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.InitialDirectory = "C:\\";
+                ofd.Filter = "Excel-файли (*.xls)|*.xls";
+                ofd.FilterIndex = 2;
+                ofd.RestoreDirectory = true;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    tbx_FilePath.Text = ofd.FileName;
+            };
+
         }
     }
 }

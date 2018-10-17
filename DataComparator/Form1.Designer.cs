@@ -36,7 +36,7 @@
             // 
             // btn_Import
             // 
-            this.btn_Import.Location = new System.Drawing.Point(366, 52);
+            this.btn_Import.Location = new System.Drawing.Point(529, 53);
             this.btn_Import.Name = "btn_Import";
             this.btn_Import.Size = new System.Drawing.Size(72, 23);
             this.btn_Import.TabIndex = 0;
@@ -45,7 +45,7 @@
             // 
             // btn_Export
             // 
-            this.btn_Export.Location = new System.Drawing.Point(366, 81);
+            this.btn_Export.Location = new System.Drawing.Point(529, 82);
             this.btn_Export.Name = "btn_Export";
             this.btn_Export.Size = new System.Drawing.Size(72, 23);
             this.btn_Export.TabIndex = 1;
@@ -54,7 +54,7 @@
             // 
             // btn_Select
             // 
-            this.btn_Select.Location = new System.Drawing.Point(366, 23);
+            this.btn_Select.Location = new System.Drawing.Point(529, 24);
             this.btn_Select.Name = "btn_Select";
             this.btn_Select.Size = new System.Drawing.Size(72, 23);
             this.btn_Select.TabIndex = 2;
@@ -66,14 +66,14 @@
             // 
             this.tbx_FilePath.Location = new System.Drawing.Point(13, 25);
             this.tbx_FilePath.Name = "tbx_FilePath";
-            this.tbx_FilePath.Size = new System.Drawing.Size(339, 20);
+            this.tbx_FilePath.Size = new System.Drawing.Size(510, 20);
             this.tbx_FilePath.TabIndex = 3;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(444, 220);
+            this.ClientSize = new System.Drawing.Size(612, 214);
             this.Controls.Add(this.tbx_FilePath);
             this.Controls.Add(this.btn_Select);
             this.Controls.Add(this.btn_Export);

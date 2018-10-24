@@ -61,16 +61,9 @@ namespace DataComparator
                 using (OleDbConnection oleDbConn = new OleDbConnection(excelConnString))
                 {
                     oleDbConn.Open();
-                    OleDbCommand oledbcmd1 = new OleDbCommand();
-                    OleDbCommand oledbcmd2 = new OleDbCommand();
-                    OleDbCommand oledbcmd3 = new OleDbCommand();
-
-                    oledbcmd1.CommandText = "Select * From [DataFromDC$C7:N11]"; //продажі
-                    oledbcmd1.Connection = oleDbConn;
-                    oledbcmd2.CommandText = "Select * From [DataFromDC$C13:G14]"; //дебіторка КЕГ
-                    oledbcmd2.Connection = oleDbConn;
-                    oledbcmd3.CommandText = "Select * From [DataFromDC$C16:H17]"; //дебіторка ГРН
-                    oledbcmd3.Connection = oleDbConn;
+                    OleDbCommand oledbcmd1 = new OleDbCommand("Select * From [DataFromDC$C7:N11]", oleDbConn);//продажі
+                    OleDbCommand oledbcmd2 = new OleDbCommand("Select * From [DataFromDC$C13:G14]", oleDbConn);//дебіторка КЕГ
+                    OleDbCommand oledbcmd3 = new OleDbCommand("Select * From [DataFromDC$C16:H17]", oleDbConn);//дебіторка ГРН
 
                     DataTable dt1 = new DataTable();
                     dt1.TableName = "Sales";
@@ -89,6 +82,9 @@ namespace DataComparator
                     ds.Tables.Add(dt2);
                     ds.Tables.Add(dt3);
 
+                    oledbcmd1 = null;
+                    oledbcmd2 = null;
+                    oledbcmd3 = null;
                     oleDbConn.Close();
                 };
             }

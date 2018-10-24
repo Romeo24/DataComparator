@@ -1,6 +1,6 @@
 ﻿namespace DataComparator
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -32,6 +32,9 @@
             this.btn_Export = new System.Windows.Forms.Button();
             this.btn_Select = new System.Windows.Forms.Button();
             this.tbx_FilePath = new System.Windows.Forms.TextBox();
+            this.chbx_DataFromDC = new System.Windows.Forms.CheckBox();
+            this.chbx_SalesFromBAT = new System.Windows.Forms.CheckBox();
+            this.chbx_DebtFromBAT = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btn_Import
@@ -70,17 +73,50 @@
             this.tbx_FilePath.Size = new System.Drawing.Size(510, 20);
             this.tbx_FilePath.TabIndex = 3;
             // 
-            // Form1
+            // chbx_DataFromDC
+            // 
+            this.chbx_DataFromDC.AutoSize = true;
+            this.chbx_DataFromDC.Location = new System.Drawing.Point(13, 48);
+            this.chbx_DataFromDC.Name = "chbx_DataFromDC";
+            this.chbx_DataFromDC.Size = new System.Drawing.Size(190, 17);
+            this.chbx_DataFromDC.TabIndex = 4;
+            this.chbx_DataFromDC.Text = "Продажі і дебіторка з Додатка-2";
+            this.chbx_DataFromDC.UseVisualStyleBackColor = true;
+            // 
+            // chbx_SalesFromBAT
+            // 
+            this.chbx_SalesFromBAT.AutoSize = true;
+            this.chbx_SalesFromBAT.Location = new System.Drawing.Point(13, 64);
+            this.chbx_SalesFromBAT.Name = "chbx_SalesFromBAT";
+            this.chbx_SalesFromBAT.Size = new System.Drawing.Size(101, 17);
+            this.chbx_SalesFromBAT.TabIndex = 5;
+            this.chbx_SalesFromBAT.Text = "Продажі з BAT";
+            this.chbx_SalesFromBAT.UseVisualStyleBackColor = true;
+            // 
+            // chbx_DebtFromBAT
+            // 
+            this.chbx_DebtFromBAT.AutoSize = true;
+            this.chbx_DebtFromBAT.Location = new System.Drawing.Point(13, 80);
+            this.chbx_DebtFromBAT.Name = "chbx_DebtFromBAT";
+            this.chbx_DebtFromBAT.Size = new System.Drawing.Size(208, 17);
+            this.chbx_DebtFromBAT.TabIndex = 6;
+            this.chbx_DebtFromBAT.Text = "Дебіторка КЕГ та ГРН з ПДВ з BAT";
+            this.chbx_DebtFromBAT.UseVisualStyleBackColor = true;
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(612, 214);
+            this.ClientSize = new System.Drawing.Size(612, 116);
+            this.Controls.Add(this.chbx_DebtFromBAT);
+            this.Controls.Add(this.chbx_SalesFromBAT);
+            this.Controls.Add(this.chbx_DataFromDC);
             this.Controls.Add(this.tbx_FilePath);
             this.Controls.Add(this.btn_Select);
             this.Controls.Add(this.btn_Export);
             this.Controls.Add(this.btn_Import);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "MainForm";
+            this.Text = "Data Comparator Tool";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -92,6 +128,9 @@
         private System.Windows.Forms.Button btn_Export;
         private System.Windows.Forms.Button btn_Select;
         private System.Windows.Forms.TextBox tbx_FilePath;
+        private System.Windows.Forms.CheckBox chbx_DataFromDC;
+        private System.Windows.Forms.CheckBox chbx_SalesFromBAT;
+        private System.Windows.Forms.CheckBox chbx_DebtFromBAT;
     }
 }
 

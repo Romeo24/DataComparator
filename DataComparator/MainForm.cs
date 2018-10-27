@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
-//using System.Data.Odbc; // для роботи з ODBCConnection
 using System.Drawing;
-using System.IO; // для отримання розширення файлу
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO; // для отримання розширення файлу
+using System.Configuration; //для роботи з SQL-підключенням з App.config
+using System.Data.SqlClient; //для роботи з MS SQL
 
 namespace DataComparator
 {
@@ -71,10 +72,91 @@ namespace DataComparator
                 listOfTableNames.Add("Debt_From_BAT");
                 arrayOfTableNames = listOfTableNames.ToArray();
             }
-            GetDataFromExcel(tbx_FilePath.Text, arrayOfTableNames, arrayOfXlQueries);
+            DataSet ds = RetrieveDataFromExcel(tbx_FilePath.Text, arrayOfTableNames, arrayOfXlQueries);
+
+            #region Import to MS SQL
+            string sqlConnString = ConfigurationManager.ConnectionStrings["sqlConnectionString"].ConnectionString;
+            string storeProc = null;
+            string tableValueParam = null;
+            DataTable dt = null;
+
+            try
+            {
+                foreach (var table in ds.Tables)
+                {
+                    if (ds.Tables.Count == 3)
+                    {
+                        switch (table.ToString())
+                        {
+                            case "Sales_from_DC":
+                                storeProc = "insert_update_sales_from_dc";
+                                tableValueParam = "SalesFromDC";
+                                dt = ds.Tables[0];
+                                break;
+                            case "Debt_KEG":
+                                storeProc = "insert_update_debt_KEG_from_dc";
+                                tableValueParam = "DebtKEGFromDC";
+                                dt = ds.Tables[1];
+                                break;
+                            case "Debt_MONEY":
+                                storeProc = "insert_update_debt_MONEY_from_dc";
+                                tableValueParam = "DebtMONEYFromDC";
+                                dt = ds.Tables[2];
+                                break;
+                        }
+                    }
+
+                    using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
+                    {
+                        sqlConn.Open();
+                        SqlCommand sqlCmd = new SqlCommand(storeProc, sqlConn);
+                        sqlCmd.CommandType = CommandType.StoredProcedure;
+                        sqlCmd.Parameters.AddWithValue(tableValueParam, dt);
+                        sqlCmd.ExecuteNonQuery();
+                        sqlConn.Close();
+                    };
+                    
+                }
+
+                //using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
+                //{
+                //    sqlConn.Open();
+                //    SqlCommand sqlCmd = new SqlCommand("insert_update_sales_from_dc", sqlConn);
+                //    sqlCmd.CommandType = CommandType.StoredProcedure;
+                //    sqlCmd.Parameters.AddWithValue("@SalesFromDC", ds.Tables[0]);
+                //    sqlCmd.ExecuteNonQuery();
+                //    sqlConn.Close();
+                //};
+                //using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
+                //{
+                //    sqlConn.Open();
+                //    SqlCommand sqlCmd = new SqlCommand("insert_update_debt_KEG_from_dc", sqlConn);
+                //    sqlCmd.CommandType = CommandType.StoredProcedure;
+                //    sqlCmd.Parameters.AddWithValue("@DebtKEGFromDC", ds.Tables[1]);
+                //    sqlCmd.ExecuteNonQuery();
+                //    sqlConn.Close();
+                //};
+                //using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
+                //{
+                //    sqlConn.Open();
+                //    SqlCommand sqlCmd = new SqlCommand("insert_update_debt_MONEY_from_dc", sqlConn);
+                //    sqlCmd.CommandType = CommandType.StoredProcedure;
+                //    sqlCmd.Parameters.AddWithValue("@DebtMONEYFromDC", ds.Tables[2]);
+                //    sqlCmd.ExecuteNonQuery();
+                //    sqlConn.Close();
+                //};
+                MessageBox.Show("Продажі, дебіторка КЕГ та ГРН з ПДВ успішно імпортовано з Excel-файлу від ДК");
+                chbx_DataFromDC.Checked = false;
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
         }
 
-        private static DataSet GetDataFromExcel(string xlFilePath, string[] arrayOfTableNames, string[] arrayOfXlQueries)
+        private static DataSet RetrieveDataFromExcel(string xlFilePath, string[] arrayOfTableNames, string[] arrayOfXlQueries)
         {
             DataSet ds = new DataSet();
             try
@@ -92,20 +174,20 @@ namespace DataComparator
                         break;
                 }
 
-                #region Retreive data from Excel
+                #region Retrieve data from Excel
                 using (OleDbConnection oleDbConn = new OleDbConnection(excelConnString))
                 {
-                    string ExcelQuery1 = null;
-                    string ExcelQuery2 = null;
-                    string ExcelQuery3 = null;
+                    string excelQuery1 = null;
+                    string excelQuery2 = null;
+                    string excelQuery3 = null;
                     OleDbCommand oleDbCmd1, oleDbCmd2, oleDbCmd3;
                     DataTable dt1, dt2, dt3;
                     OleDbDataAdapter odda1, odda2, odda3;
                     oleDbConn.Open();
                     if (arrayOfXlQueries.Count() == 1)
                     {
-                        ExcelQuery1 = arrayOfXlQueries[0];
-                        oleDbCmd1 = new OleDbCommand(ExcelQuery1, oleDbConn);
+                        excelQuery1 = arrayOfXlQueries[0];
+                        oleDbCmd1 = new OleDbCommand(excelQuery1, oleDbConn);
                         odda1 = new OleDbDataAdapter(oleDbCmd1);
                         dt1 = new DataTable();
                         dt1.TableName = arrayOfTableNames[0];
@@ -114,12 +196,12 @@ namespace DataComparator
                     }
                     else if (arrayOfXlQueries.Count() == 3)
                     {
-                        ExcelQuery1 = arrayOfXlQueries[0];
-                        ExcelQuery2 = arrayOfXlQueries[1];
-                        ExcelQuery3 = arrayOfXlQueries[2];
-                        oleDbCmd1 = new OleDbCommand(ExcelQuery1, oleDbConn);
-                        oleDbCmd2 = new OleDbCommand(ExcelQuery2, oleDbConn);
-                        oleDbCmd3 = new OleDbCommand(ExcelQuery3, oleDbConn);
+                        excelQuery1 = arrayOfXlQueries[0];
+                        excelQuery2 = arrayOfXlQueries[1];
+                        excelQuery3 = arrayOfXlQueries[2];
+                        oleDbCmd1 = new OleDbCommand(excelQuery1, oleDbConn);
+                        oleDbCmd2 = new OleDbCommand(excelQuery2, oleDbConn);
+                        oleDbCmd3 = new OleDbCommand(excelQuery3, oleDbConn);
 
                         odda1 = new OleDbDataAdapter(oleDbCmd1);
                         odda2 = new OleDbDataAdapter(oleDbCmd2);

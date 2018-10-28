@@ -8,22 +8,44 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataComparator.Properties
-{
-
-
+namespace DataComparator.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=\"{0}\";Extended Properties=\'Excel 8." +
+            "0;HDR=YES;IMEX=1\'\"")]
+        public string excel97ConnectionString {
+            get {
+                return ((string)(this["excel97ConnectionString"]));
+            }
+            set {
+                this["excel97ConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\"{0}\";Extended Properties=\'Excel 1" +
+            "2.0 Xml;HDR=YES;IMEX=1\'\"")]
+        public string excel2007ConnectionString {
+            get {
+                return ((string)(this["excel2007ConnectionString"]));
+            }
+            set {
+                this["excel2007ConnectionString"] = value;
             }
         }
     }

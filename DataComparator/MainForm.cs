@@ -19,6 +19,23 @@ namespace DataComparator
         public MainForm()
         {
             InitializeComponent();
+
+            string sqlConnString = ConfigurationManager.ConnectionStrings["sqlConnectionString"].ConnectionString;
+            using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
+            {
+                sqlConn.Open();
+                SqlCommand sqlcmd = new SqlCommand("SELECT dc_name FROM dbo.distributors", sqlConn);
+                using (SqlDataReader sqldr = sqlcmd.ExecuteReader())
+                {
+                    while (sqldr.Read())
+                    {
+                        cmbbx_dc_list.Items.Add(sqldr.GetString(0));
+                    }
+                };
+                sqlConn.Close();
+            };
+
+
         }
 
         private void btn_Select_Click(object sender, EventArgs e)
@@ -175,7 +192,12 @@ namespace DataComparator
             {
                 MessageBox.Show(ex.Message.ToString());
             }
+        }
+
+        private void btn_Export_Click(object sender, EventArgs e)
+        {
 
         }
+
     }
 }

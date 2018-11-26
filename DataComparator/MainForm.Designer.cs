@@ -35,11 +35,13 @@
             this.chbx_DataFromDC = new System.Windows.Forms.CheckBox();
             this.chbx_SalesFromBAT = new System.Windows.Forms.CheckBox();
             this.chbx_DebtFromBAT = new System.Windows.Forms.CheckBox();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.cmbbx_dc_list = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btn_Import
             // 
-            this.btn_Import.Location = new System.Drawing.Point(529, 53);
+            this.btn_Import.Location = new System.Drawing.Point(605, 24);
             this.btn_Import.Name = "btn_Import";
             this.btn_Import.Size = new System.Drawing.Size(72, 23);
             this.btn_Import.TabIndex = 0;
@@ -49,12 +51,13 @@
             // 
             // btn_Export
             // 
-            this.btn_Export.Location = new System.Drawing.Point(529, 82);
+            this.btn_Export.Location = new System.Drawing.Point(605, 52);
             this.btn_Export.Name = "btn_Export";
             this.btn_Export.Size = new System.Drawing.Size(72, 23);
             this.btn_Export.TabIndex = 1;
             this.btn_Export.Text = "Експорт";
             this.btn_Export.UseVisualStyleBackColor = true;
+            this.btn_Export.Click += new System.EventHandler(this.btn_Export_Click);
             // 
             // btn_Select
             // 
@@ -103,11 +106,29 @@
             this.chbx_DebtFromBAT.Text = "Дебіторка КЕГ та ГРН з ПДВ з BAT";
             this.chbx_DebtFromBAT.UseVisualStyleBackColor = true;
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePicker1.Location = new System.Drawing.Point(508, 54);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(91, 20);
+            this.dateTimePicker1.TabIndex = 7;
+            // 
+            // cmbbx_dc_list
+            // 
+            this.cmbbx_dc_list.FormattingEnabled = true;
+            this.cmbbx_dc_list.Location = new System.Drawing.Point(296, 54);
+            this.cmbbx_dc_list.Name = "cmbbx_dc_list";
+            this.cmbbx_dc_list.Size = new System.Drawing.Size(206, 21);
+            this.cmbbx_dc_list.TabIndex = 8;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(612, 116);
+            this.ClientSize = new System.Drawing.Size(688, 155);
+            this.Controls.Add(this.cmbbx_dc_list);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.chbx_DebtFromBAT);
             this.Controls.Add(this.chbx_SalesFromBAT);
             this.Controls.Add(this.chbx_DataFromDC);
@@ -131,6 +152,8 @@
         private System.Windows.Forms.CheckBox chbx_DataFromDC;
         private System.Windows.Forms.CheckBox chbx_SalesFromBAT;
         private System.Windows.Forms.CheckBox chbx_DebtFromBAT;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.ComboBox cmbbx_dc_list;
     }
 }
 

@@ -113,20 +113,21 @@
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(91, 20);
             this.dateTimePicker1.TabIndex = 7;
+            this.dateTimePicker1.Value = new System.DateTime(2018, 11, 30, 0, 0, 0, 0);
             // 
             // cmbbx_dc_list
             // 
             this.cmbbx_dc_list.FormattingEnabled = true;
-            this.cmbbx_dc_list.Location = new System.Drawing.Point(296, 54);
+            this.cmbbx_dc_list.Location = new System.Drawing.Point(238, 54);
             this.cmbbx_dc_list.Name = "cmbbx_dc_list";
-            this.cmbbx_dc_list.Size = new System.Drawing.Size(206, 21);
+            this.cmbbx_dc_list.Size = new System.Drawing.Size(264, 21);
             this.cmbbx_dc_list.TabIndex = 8;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(688, 155);
+            this.ClientSize = new System.Drawing.Size(688, 110);
             this.Controls.Add(this.cmbbx_dc_list);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.chbx_DebtFromBAT);

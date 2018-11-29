@@ -200,6 +200,7 @@ namespace DataComparator
             int debDate = Int32.Parse(dateTimePicker1.Value.Date.ToString("yyyyMMdd"));
             int reportPeriod = Int32.Parse(dateTimePicker1.Value.Date.ToString("yyyyMM"));
             DataTable dt, dt1;
+            string fullPath = string.Empty;
 
             //if (cmbbx_dc_list.SelectedIndex == -1) //нічого не вибрано, значить експортуємо всі ТС
             //{
@@ -217,87 +218,66 @@ namespace DataComparator
             string sqlConnString = ConfigurationManager.ConnectionStrings["sqlConnectionString"].ConnectionString;
             using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
             {
+                DataSet ds = new DataSet();
                 sqlConn.Open();
                 using (SqlCommand sqlcmd = new SqlCommand("SELECT * FROM dbo.GetPivotTableDebt(@deb_date)", sqlConn))
                 {
                     sqlcmd.Parameters.AddWithValue("@deb_date", debDate);
                     SqlDataAdapter sqlda = new SqlDataAdapter(sqlcmd);
                     dt = new DataTable();
+                    dt.TableName = "Debt";
                     sqlda.Fill(dt);
+                    ds.Tables.Add(dt);
                 };
-                sqlConn.Close();
-
-                try
-                {
-                    string fullPath = Directory.GetCurrentDirectory() + "\\PivotTableDebt.xls";
-
-                    StreamWriter strmWrtr = new StreamWriter(fullPath, false, Encoding.GetEncoding("Windows-1251"));
-                    for (int columnID = 0; columnID < dt.Columns.Count; columnID++)
-                    {
-                        strmWrtr.Write(dt.Columns[columnID].ToString().ToUpper() + "\t");
-                    }
-                    strmWrtr.WriteLine();
-                    for (int rowID = 0; rowID < dt.Rows.Count; rowID++)
-                    {
-                        for (int columnID = 0; columnID < dt.Columns.Count; columnID++)
-                        {
-                            if (dt.Rows[rowID][columnID] != null)
-                            {
-                                strmWrtr.Write(Convert.ToString(dt.Rows[rowID][columnID]) + "\t");
-                            }
-                            else
-                            {
-                                strmWrtr.Write("\t");
-                            }
-                        }
-                        strmWrtr.WriteLine();
-                    }
-                    strmWrtr.Close();
-                    MessageBox.Show("Дані успішно експортовано в Ексель-файл");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
-
-
-                sqlConn.Open();
                 using (SqlCommand sqlcmd1 = new SqlCommand("SELECT * FROM dbo.GetPivotTableSales(@report_period)", sqlConn))
                 {
                     sqlcmd1.Parameters.AddWithValue("@report_period", reportPeriod);
                     SqlDataAdapter sqlda1 = new SqlDataAdapter(sqlcmd1);
                     dt1 = new DataTable();
+                    dt1.TableName = "Sales";
                     sqlda1.Fill(dt1);
+                    ds.Tables.Add(dt1);
                 };
                 sqlConn.Close();
 
                 try
                 {
-                    string fullPath = Directory.GetCurrentDirectory() + "\\PivotTableSales.xls";
-
-                    StreamWriter strmWrtr1 = new StreamWriter(fullPath, false, Encoding.GetEncoding("Windows-1251"));
-                    for (int columnID = 0; columnID < dt1.Columns.Count; columnID++)
+                    foreach (DataTable dataTable in ds.Tables)
                     {
-                        strmWrtr1.Write(dt1.Columns[columnID].ToString().ToUpper() + "\t");
-                    }
-                    strmWrtr1.WriteLine();
-                    for (int rowID = 0; rowID < dt1.Rows.Count; rowID++)
-                    {
-                        for (int columnID = 0; columnID < dt1.Columns.Count; columnID++)
+                        switch (dataTable.TableName) // тут проблема!!!!
                         {
-                            if (dt1.Rows[rowID][columnID] != null)
-                            {
-                                strmWrtr1.Write(Convert.ToString(dt1.Rows[rowID][columnID]) + "\t");
-                            }
-                            else
-                            {
-                                strmWrtr1.Write("\t");
-                            }
+                            case "Debt":
+                                fullPath = Directory.GetCurrentDirectory() + "\\PivotTableDebt.xls";
+                                break;
+                            case "Sales":
+                                fullPath = Directory.GetCurrentDirectory() + "\\PivotTableSales.xls";
+                                break;
                         }
-                        strmWrtr1.WriteLine();
+
+                        StreamWriter strmWrtr = new StreamWriter(fullPath, false, Encoding.GetEncoding("Windows-1251"));
+                        for (int columnID = 0; columnID < dataTable.Columns.Count; columnID++)
+                        {
+                            strmWrtr.Write(dataTable.Columns[columnID].ToString().ToUpper() + "\t");
+                        }
+                        strmWrtr.WriteLine();
+                        for (int rowID = 0; rowID < dataTable.Rows.Count; rowID++)
+                        {
+                            for (int columnID = 0; columnID < dataTable.Columns.Count; columnID++)
+                            {
+                                if (dataTable.Rows[rowID][columnID] != null)
+                                {
+                                    strmWrtr.Write(Convert.ToString(dataTable.Rows[rowID][columnID]) + "\t");
+                                }
+                                else
+                                {
+                                    strmWrtr.Write("\t");
+                                }
+                            }
+                            strmWrtr.WriteLine();
+                        }
+                        strmWrtr.Close();
+                        MessageBox.Show("Дані успішно експортовано в Ексель-файл");
                     }
-                    strmWrtr1.Close();
-                    MessageBox.Show("Дані успішно експортовано в Ексель-файл");
                 }
                 catch (Exception ex)
                 {

@@ -62,14 +62,16 @@ namespace DataComparator
 
             if (chbx_DataFromDC.Checked)
             {
-                listOfXlQueries.Add("Select * From [DataFromDC$C7:N11]");
-                listOfXlQueries.Add("Select * From [DataFromDC$C13:G14]");
-                listOfXlQueries.Add("Select * From [DataFromDC$C16:H17]");
+                listOfXlQueries.Add("Select * From [DataFromDC$C7:N11]");//№1 - sales
+                listOfXlQueries.Add("Select * From [DataFromDC$C13:N15]");//№2 - archived stocks
+                listOfXlQueries.Add("Select * From [DataFromDC$C19:G20]");//№3 - debt KEG
+                listOfXlQueries.Add("Select * From [DataFromDC$C22:H23]");//№4 - debt MONEY
                 arrayOfXlQueries = listOfXlQueries.ToArray();
 
-                listOfTableNames.Add("Sales_from_DC");
-                listOfTableNames.Add("Debt_KEG");
-                listOfTableNames.Add("Debt_MONEY");
+                listOfTableNames.Add("Sales_DC");
+                listOfTableNames.Add("Archived_Stocks_DC");
+                listOfTableNames.Add("Debt_KEG_DC");
+                listOfTableNames.Add("Debt_MONEY_DC");
                 arrayOfTableNames = listOfTableNames.ToArray();
             }
             else if (chbx_SalesFromBAT.Checked)
@@ -77,7 +79,7 @@ namespace DataComparator
                 listOfXlQueries.Add("Select * From [SalesFromBAT$B1:M57]");
                 arrayOfXlQueries = listOfXlQueries.ToArray();
 
-                listOfTableNames.Add("Sales_From_BAT");
+                listOfTableNames.Add("Sales_BAT");
                 arrayOfTableNames = listOfTableNames.ToArray();
             }
             else if (chbx_DebtFromBAT.Checked)
@@ -85,7 +87,15 @@ namespace DataComparator
                 listOfXlQueries.Add("Select * From [DebtFromBAT$B1:I15]");
                 arrayOfXlQueries = listOfXlQueries.ToArray();
 
-                listOfTableNames.Add("Debt_From_BAT");
+                listOfTableNames.Add("Debt_BAT");
+                arrayOfTableNames = listOfTableNames.ToArray();
+            }
+            else if (chbx_ArchivedStockstFromBAT.Checked)
+            {
+                listOfXlQueries.Add("Select * From [ArchivedStocksBAT$B1:M27]");// діапазон залишків з файла з БАТ
+                arrayOfXlQueries = listOfXlQueries.ToArray();
+
+                listOfTableNames.Add("Archived_Stocks_BAT");// назва таблиці
                 arrayOfTableNames = listOfTableNames.ToArray();
             }
             DataSet ds = RetrieveDataFromExcel(tbx_FilePath.Text, arrayOfTableNames, arrayOfXlQueries);
@@ -94,6 +104,7 @@ namespace DataComparator
             chbx_DataFromDC.Checked = false;
             chbx_SalesFromBAT.Checked = false;
             chbx_DebtFromBAT.Checked = false;
+            chbx_ArchivedStockstFromBAT.Checked = false;
         }
 
         private static DataSet RetrieveDataFromExcel(string xlFilePath, string[] arrayOfTableNames, string[] arrayOfXlQueries)
@@ -154,25 +165,33 @@ namespace DataComparator
                 {
                     switch (ds.Tables[tableNameID].ToString())
                     {
-                        case "Sales_from_DC":
+                        case "Sales_DC":
                             storeProc = "insert_update_sales_from_dc";
                             tableValueParam = "SalesFromDC";
                             break;
-                        case "Debt_KEG":
+                        case "Archived_Stocks_DC":
+                            storeProc = "insert_update_archived_stocks_from_dc";
+                            tableValueParam = "ArchivedStocksFromDC";
+                            break;
+                        case "Debt_KEG_DC":
                             storeProc = "insert_update_debt_KEG_from_dc";
                             tableValueParam = "DebtKEGFromDC";
                             break;
-                        case "Debt_MONEY":
+                        case "Debt_MONEY_DC":
                             storeProc = "insert_update_debt_MONEY_from_dc";
                             tableValueParam = "DebtMONEYFromDC";
                             break;
-                        case "Sales_From_BAT":
+                        case "Sales_BAT":
                             storeProc = "insert_update_sales_from_bat";
                             tableValueParam = "SalesFromBAT";
                             break;
-                        case "Debt_From_BAT":
+                        case "Debt_BAT":
                             storeProc = "insert_update_debt_from_bat";
                             tableValueParam = "DebtFromBAT";
+                            break;
+                        case "Archived_Stocks_BAT":
+                            storeProc = "insert_update_archived_stocks_from_BAT";
+                            tableValueParam = "ArchivedStocksBAT";
                             break;
                     }
                     using (SqlConnection sqlConn = new SqlConnection(sqlConnString))
@@ -195,12 +214,16 @@ namespace DataComparator
 
         private void btn_Export_Click(object sender, EventArgs e)
         {
-            int spn = 0;
-            int enterpiseCode = 0;
+            //int spn = 0;
+            //int enterpiseCode = 0;
             int debDate = Int32.Parse(dateTimePicker1.Value.Date.ToString("yyyyMMdd"));
             int reportPeriod = Int32.Parse(dateTimePicker1.Value.Date.ToString("yyyyMM"));
-            DataTable dt, dt1;
+            int archStockDate = debDate;
+            DataTable dt, dt1, dt2;
+            SqlDataAdapter sqlda, sqlda1, sqlda2;
             string fullPath = string.Empty;
+            string path = Directory.GetCurrentDirectory();
+
 
             //if (cmbbx_dc_list.SelectedIndex == -1) //нічого не вибрано, значить експортуємо всі ТС
             //{
@@ -223,7 +246,7 @@ namespace DataComparator
                 using (SqlCommand sqlcmd = new SqlCommand("SELECT * FROM dbo.GetPivotTableDebt(@deb_date)", sqlConn))
                 {
                     sqlcmd.Parameters.AddWithValue("@deb_date", debDate);
-                    SqlDataAdapter sqlda = new SqlDataAdapter(sqlcmd);
+                    sqlda = new SqlDataAdapter(sqlcmd);
                     dt = new DataTable();
                     dt.TableName = "Debt";
                     sqlda.Fill(dt);
@@ -232,11 +255,20 @@ namespace DataComparator
                 using (SqlCommand sqlcmd1 = new SqlCommand("SELECT * FROM dbo.GetPivotTableSales(@report_period)", sqlConn))
                 {
                     sqlcmd1.Parameters.AddWithValue("@report_period", reportPeriod);
-                    SqlDataAdapter sqlda1 = new SqlDataAdapter(sqlcmd1);
+                    sqlda1 = new SqlDataAdapter(sqlcmd1);
                     dt1 = new DataTable();
                     dt1.TableName = "Sales";
                     sqlda1.Fill(dt1);
                     ds.Tables.Add(dt1);
+                };
+                using (SqlCommand sqlcmd2 = new SqlCommand("SELECT * FROM dbo.GetPivotTableArchivedStocks(@arch_stock_date)", sqlConn))
+                {
+                    sqlcmd2.Parameters.AddWithValue("@arch_stock_date", archStockDate);
+                    sqlda2 = new SqlDataAdapter(sqlcmd2);
+                    dt2 = new DataTable();
+                    dt2.TableName = "Archived_Stocks";
+                    sqlda2.Fill(dt2);
+                    ds.Tables.Add(dt2);
                 };
                 sqlConn.Close();
 
@@ -244,13 +276,16 @@ namespace DataComparator
                 {
                     foreach (DataTable dataTable in ds.Tables)
                     {
-                        switch (dataTable.TableName) // тут проблема!!!!
+                        switch (dataTable.TableName)
                         {
                             case "Debt":
-                                fullPath = Directory.GetCurrentDirectory() + "\\PivotTableDebt.xls";
+                                fullPath = path + "\\PivotTableDebt.xls";
                                 break;
                             case "Sales":
-                                fullPath = Directory.GetCurrentDirectory() + "\\PivotTableSales.xls";
+                                fullPath = path + "\\PivotTableSales.xls";
+                                break;
+                            case "Archived_Stocks":
+                                fullPath = path + "\\PivotTableArchivedStocks.xls";
                                 break;
                         }
 
